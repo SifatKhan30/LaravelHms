@@ -1,0 +1,112 @@
+@extends('layouts.layout2')
+@section('content')
+
+<div class="card">
+   
+    <form class="form-horizontal" action="{{route('assign.update',$assign->id)}}" method="post">
+        @csrf
+        
+            
+            <div class="form-group row">
+               
+                
+                    <label class="col-sm-2 text-right control-label col-form-label">Member</label>
+                    <div class="col-md-3">
+
+                        <select class="select2 form-control custom-select" style="width: 100%; height:36px;" name="member_id">
+                            @foreach($member as $m)
+                                <option value="{{$m->id}}" <?php if($assign->member_id == $m->id){ echo 'selected';} ?>>{{$m->name}}</option>
+                            @endforeach
+                        </select>
+                    
+                </div>
+            </div>
+            <div class="form-group row">
+               
+                    <label class="col-sm-2 text-right control-label col-form-label">Room No.</label>
+                    <div class="col-md-3">
+
+                        <select class="select2 form-control custom-select" style="width: 100%; height:36px;" name="room_id" id="room">
+                           
+                            @foreach($room as $r)
+                                <option value="{{$r->id}}" @if($assign->room_id == $r->id) {{'selected'}} @endif>{{$r->room_no}}</option>
+                            @endforeach
+                        </select>
+                    
+                </div>
+            </div>
+            <div class="form-group row">
+                    <label class="col-sm-2 text-right control-label col-form-label">Category</label>
+                    <div class="col-md-3">
+
+                        <select class="select2 form-control custom-select" style="width: 100%; height:36px;" name="category">
+                            
+                            @foreach($room as $c)
+                                <option value="{{$c->category}}"  @if($assign->room_id == $r->id) {{'selected'}} @endif>{{$c->category}}</option>
+                            @endforeach
+                        </select>
+                    
+                </div>
+            </div>
+            <div class="form-group row">
+                    <label class="col-sm-2 text-right control-label col-form-label">Bed No.</label>
+                <div class="col-md-3" id="b">
+                    <select class="select2 form-control custom-select" style="width: 100%; height:36px;" name="bed_id">
+                            <option >Select Bed</option>
+                    </select> 
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="fname"  class="col-sm-2 text-right control-label col-form-label">Assign Date</label>
+                <div class="col-sm-3">
+                    <input type="date"  class="form-control" name="date" id="fname" placeholder="Room No. Here" value="{{$assign->date}}">
+                </div>
+               
+            </div>
+           
+            {{-- radio button --}}          
+            
+         
+        </div>
+        @if($message =  Session::get('msg'))
+        <div class="alert alert-success">
+            <h3>{{$message}}</h3>
+        </div>
+        @endif
+        <div class="border-top">
+            <div class="card-body">
+                <button type="submit" class="btn btn-primary">Assign Update</button>
+            </div>
+        </div>
+    </form>
+</div>
+@endsection
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+    $(document).ready(function() {
+      $('#room').change(function() {
+        let roomID = $(this).val();
+        $.ajax({
+          url: '{{route("getbed")}}',
+          method: 'post',
+          data: {
+            id: roomID,
+            _token:'{{ csrf_token() }}'
+          },
+          success: function(data) {
+            let ht=`<select class="select2 form-control custom-select" style="width: 100%; height:36px;" name="bed_id" id="bed">
+                <option>Select Bed</option>`
+                          data.map((d,i)=>{
+                            ht+=`<option value="${d.id}" >${d.bed_no}</option>`
+                          })
+                        ht+=`</select> `
+                          $('#b').html(ht)
+          }
+        });
+      });
+
+    });
+  </script>
+
