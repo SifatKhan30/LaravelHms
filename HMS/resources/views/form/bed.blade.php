@@ -17,11 +17,8 @@
             </div>
             
             <div class="form-group row">
-               
-                
                     <label class="col-sm-2 text-right control-label col-form-label">Room No.</label>
                     <div class="col-md-3">
-
                         <select class="select2 form-control custom-select" style="width: 100%; height:36px;" name="room_id">
                             <option value="0">Select Room</option>
                             @foreach($room as $r)
@@ -31,7 +28,6 @@
                             @error('room_id')
                                 <span class="text-danger">{{$message}}</span>
                             @enderror
-                    
                 </div>
             </div>
            

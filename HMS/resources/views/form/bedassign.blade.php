@@ -29,7 +29,7 @@
 
                         <select class="select2 form-control custom-select" style="width: 100%; height:36px;" name="room_id" id="room">
                             <option>Select Room</option>
-                            @foreach($room as $r)
+                            @foreach($room['roomData'] as $r)
                                 <option value="{{$r->id}}">{{$r->room_no}}</option>
                             @endforeach
                         </select>
@@ -42,7 +42,7 @@
 
                         <select class="select2 form-control custom-select" style="width: 100%; height:36px;" name="category">
                             <option>Select category</option>
-                            @foreach($room as $c)
+                            @foreach($room['category'] as $c)
                                 <option value="{{$c->category}}">{{$c->category}}</option>
                             @endforeach
                         </select>

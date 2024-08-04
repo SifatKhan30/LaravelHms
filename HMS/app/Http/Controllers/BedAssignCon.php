@@ -24,16 +24,30 @@ class BedAssignCon extends Controller
      */
     public function create()
     {
-        $member=Member::all();
-        $room=Room::all();
+        $member = Member::leftJoin('bed_assigns', 'members.id', '=', 'bed_assigns.member_id')
+        ->whereNull('bed_assigns.member_id')
+        ->select('members.id', 'members.name')
+        ->get();
+        $roomData=Room::leftJoin('bed_assigns','rooms.id', '=', 'bed_assigns.room_id')
+        ->whereNull('bed_assigns.room_id')
+        ->select('rooms.id','rooms.room_no','rooms.room_charge')
+        ->get();
+        $category = Room::select('category')
+        ->distinct()
+        ->get();
+        $room= [
+            'roomData'=>$roomData,
+            'category'=>$category
+        ];
         $bed=Bed::all();
         $assign = $bed->contains('status',['unavailable']);
+        // dd($room);
         if($assign){
             return 'error';
         }else{
             return view('form.bedassign',compact('room','member','bed'));
         }
-        
+       
     }
 
     /**
@@ -48,9 +62,6 @@ class BedAssignCon extends Controller
             'date'=>'required',
         ]);
         $bed =Bed::findOrFail($request->bed_id);
-        // if($bed->status === 'unavailable'){
-        //     return redirect()->back()->with('msg','Already assigned');
-        // }
 
         $data=$request->all();
         BedAssign::create($data);
@@ -76,6 +87,7 @@ class BedAssignCon extends Controller
         // dd($assign);
         $member=Member::all();
         $room=Room::all();
+
         $bed=Bed::all();
         
        

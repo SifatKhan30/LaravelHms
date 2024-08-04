@@ -25,7 +25,16 @@ class BedCon extends Controller
      */
     public function create()
     {
-        $room=Room::all();
+        // $room=Room::leftJoin('beds', 'rooms.id', '=', 'beds.room_id')
+        // ->select('rooms.id','rooms.room_no')
+        // ->groupBy('rooms.id')
+        // ->havingRaw('COUNT(beds.room_id) < 2')
+        // ->get();
+        $room = Room::leftJoin('beds', 'rooms.id', '=', 'beds.room_id')
+            ->select('rooms.id','rooms.room_no')
+            ->groupBy('rooms.id','rooms.room_no')
+            ->havingRaw('COUNT(beds.room_id) < 2')
+            ->get();
         // dd($room);
         return view('form.bed',compact('room'));
     }

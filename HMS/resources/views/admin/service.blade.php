@@ -22,8 +22,8 @@
             @foreach ($list as $k => $serv)
                 <tr>
                     <td>{{$k+1}}</td>
-                    <td>{{$serv -> name}}</td>
-                    <td>{{$serv -> price}}</td>
+                    <td>{{$serv->name}}</td>
+                    <td>{{$serv->price}}</td>
                     <td>
                         <a href="" class="btn btn-sm btn-success">Edit</a>
 

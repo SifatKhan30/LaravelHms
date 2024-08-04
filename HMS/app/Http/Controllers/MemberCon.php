@@ -65,7 +65,6 @@ class MemberCon extends Controller
             'photo.image'=>'Insert an image',
             'photo.mimes'=>'Insert a valid file'
 
-
         ])->validate();
        $data = $request->all();
        if ($image = $request->file('photo')){
@@ -82,7 +81,7 @@ class MemberCon extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id, Request $request)
     {
         $room=Room::all();
         $member=Member::find($id);
@@ -90,11 +89,19 @@ class MemberCon extends Controller
         ->where('member_id','=', $member->id)
         ->get();
 
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
         $crntmonth = Carbon::now()->format('Y-m');
         $food = Food_order::select('member_id', DB::raw('SUM(total) as stotal'), DB::raw('MAX(date) as ldate'))
         ->where(DB::raw('DATE_FORMAT(date, "%Y-%m")'), '=', $crntmonth)
         ->where('member_id', '=', $member->id)
         ->groupBy('member_id')
+        ->get();
+        $foodReport = Food_order::select('date', 'member_id', DB::raw('SUM(total) as stotal'))
+        ->whereBetween('date', [$startDate, $endDate])
+        ->where('member_id', '=', $member->id)
+        ->groupBy('date', 'member_id')
         ->get();
 
         $service = Service_sell::select('member_id', DB::raw('SUM(total) as stotal'), DB::raw('MAX(date) as ldate'))

@@ -16,6 +16,8 @@ class RoomCon extends Controller
     {
         $list=Room::all();
         return view('admin.room',compact('list'));
+        // return response()->json($list);
+        // dd($list);
     }
 
     /**
@@ -31,20 +33,27 @@ class RoomCon extends Controller
      */
     public function store(Request $request)
     {
-        Validator::make($request->all(),[
-            'room_no'=> 'required',
-            'room_charge'=>'required|numeric',
+        $validator=Validator::make($request->all(),[
+            'room_no'=> 'required|unique',
+            'room_charge'=>'required|numeric|between:1000,1500',
             'category'=> 'required',
         ],[
-            'room_no.required'=>'Please enter a room number',
-            'room_charge.required'=>'Please enter the room charge',
-            'room_charge.numeric'=>'Please enter a numeric digit',
+            'room_no.required' => 'Please enter a room number',
+            'room_no.unique' => 'The room number already exists',
+            'room_charge.required' => 'Please enter the room charge',
+            'room_charge.numeric' => 'Please enter a numeric digit',
+            'room_charge.between' => 'The room charge should be within 1000 to 1500',
             'category.required'=>'Please select a category'
 
-        ])->validate();
-        $data= $request->all();
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        $data = $request->all();
         Room::create($data);
-        return redirect()->route('room.index');
+        return response()->json(['data'=>$data, 'message' => 'Room created successfully'], 201);
+    
     }
 
     /**
